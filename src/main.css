@@ -5,3 +5,8 @@ html, body, #root {
   max-width: 100vw;
   overflow-x: hidden;
 }
+
+#root {
+  transform: scale(2.1);
+
+}

@@ -33,6 +33,7 @@ import {
 } from "./services/firebaseService";
 import { loadLeaderboardFromFirestore } from "./services/firebaseService";
 import background from "./assets/images/background.jpg";
+import logo from "./assets/images/logo.png";
 
 function App() {
     const [players, setPlayers] = useState<Player[]>(
@@ -167,8 +168,9 @@ function App() {
         <Box
             sx={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
-                alignItems: "flex-start",
+                alignItems: "center",
                 minHeight: "100vh",
                 backgroundImage: `url(${background})`,
                 backgroundSize: "cover",
@@ -179,6 +181,18 @@ function App() {
             }}
         >
             <Box
+                component="img"
+                src={logo}
+                alt="Noches de Cacho Logo"
+                sx={{
+                    maxWidth: 300,
+                    alignSelf: "center",
+                    mb: 2,
+                    mt: 35,
+                }}
+            />
+
+            <Box
                 sx={{
                     width: "100%",
                     maxWidth: 375, // You can set to 375 for iPhone size
@@ -188,9 +202,6 @@ function App() {
                     p: 2,
                 }}
             >
-                <Typography variant="h4" gutterBottom>
-                    Cacho Scorekeeper
-                </Typography>
 
                 <Box mb={4}>
                     <Typography variant="h6" gutterBottom>
@@ -232,7 +243,7 @@ function App() {
                         </FormControl>
 
                         <Button
-                            variant="outlined"
+                            variant="contained"
                             onClick={handleAddPlayer}
                             disabled={!newPlayerName.trim()}
                         >
