@@ -32,6 +32,7 @@ import {
     updateLeaderboard,
 } from "./services/firebaseService";
 import { loadLeaderboardFromFirestore } from "./services/firebaseService";
+import background from "./assets/images/background.jpg";
 
 function App() {
     const [players, setPlayers] = useState<Player[]>(
@@ -163,281 +164,331 @@ function App() {
     };
 
     return (
-        <Container maxWidth="md" sx={{ py: 4 }}>
-            <Typography variant="h4" gutterBottom>
-                Cacho Scorekeeper
-            </Typography>
-
-            <Box mb={4}>
-                <Typography variant="h6" gutterBottom>
-                    Add Player
+        <Box
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "flex-start",
+                minHeight: "100vh",
+                backgroundImage: `url(${background})`,
+                backgroundSize: "cover",
+                backgroundRepeat: "repeat",
+                backgroundPosition: "center",
+                px: 2,
+                py: 4,
+            }}
+        >
+            <Box
+                sx={{
+                    width: "100%",
+                    maxWidth: 375, // You can set to 375 for iPhone size
+                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    borderRadius: 8,
+                    boxShadow: 3,
+                    p: 2,
+                }}
+            >
+                <Typography variant="h4" gutterBottom>
+                    Cacho Scorekeeper
                 </Typography>
-                <Box display="flex" alignItems="center" flexWrap="wrap" gap={2}>
-                    <Autocomplete
-                        freeSolo
-                        options={knownPlayers.map((p) => p.name)}
-                        inputValue={newPlayerName}
-                        onInputChange={(_, value) => setNewPlayerName(value)}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Name" />
-                        )}
-                        sx={{ width: 200 }}
-                    />
 
-                    <FormControl sx={{ minWidth: 120 }}>
-                        <InputLabel>Team</InputLabel>
-                        <Select
-                            value={String(newPlayerTeam)}
-                            onChange={(e: SelectChangeEvent) =>
-                                setNewPlayerTeam(
-                                    parseInt(e.target.value) as 1 | 2
-                                )
+                <Box mb={4}>
+                    <Typography variant="h6" gutterBottom>
+                        Add Player
+                    </Typography>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        flexWrap="wrap"
+                        gap={2}
+                    >
+                        <Autocomplete
+                            freeSolo
+                            options={knownPlayers.map((p) => p.name)}
+                            inputValue={newPlayerName}
+                            onInputChange={(_, value) =>
+                                setNewPlayerName(value)
                             }
-                            label="Team"
-                        >
-                            <MenuItem value="1">Team 1</MenuItem>
-                            <MenuItem value="2">Team 2</MenuItem>
-                        </Select>
-                    </FormControl>
+                            renderInput={(params) => (
+                                <TextField {...params} label="Name" />
+                            )}
+                            sx={{ width: 200 }}
+                        />
 
+                        <FormControl sx={{ minWidth: 120 }}>
+                            <InputLabel>Team</InputLabel>
+                            <Select
+                                value={String(newPlayerTeam)}
+                                onChange={(e: SelectChangeEvent) =>
+                                    setNewPlayerTeam(
+                                        parseInt(e.target.value) as 1 | 2
+                                    )
+                                }
+                                label="Team"
+                            >
+                                <MenuItem value="1">Team 1</MenuItem>
+                                <MenuItem value="2">Team 2</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <Button
+                            variant="outlined"
+                            onClick={handleAddPlayer}
+                            disabled={!newPlayerName.trim()}
+                        >
+                            Add Player
+                        </Button>
+                    </Box>
+                </Box>
+
+                <Box display="flex" justifyContent="space-between" mb={4}>
+                    <Box width="48%">
+                        <Typography variant="h6">Team 1</Typography>
+                        <Paper variant="outlined" sx={{ p: 2 }}>
+                            {team1.length === 0 ? (
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    No players
+                                </Typography>
+                            ) : (
+                                team1.map((p) => (
+                                    <Box
+                                        key={p.id}
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="space-between"
+                                    >
+                                        <Typography>
+                                            {p.name}: {p.total} Bs
+                                        </Typography>
+                                        <Button
+                                            size="small"
+                                            color="error"
+                                            onClick={() =>
+                                                handleRemovePlayer(p.id)
+                                            }
+                                        >
+                                            ✕
+                                        </Button>
+                                    </Box>
+                                ))
+                            )}
+                        </Paper>
+                    </Box>
+
+                    <Box width="48%">
+                        <Typography variant="h6">Team 2</Typography>
+                        <Paper variant="outlined" sx={{ p: 2 }}>
+                            {team2.length === 0 ? (
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                >
+                                    No players
+                                </Typography>
+                            ) : (
+                                team2.map((p) => (
+                                    <Box
+                                        key={p.id}
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="space-between"
+                                    >
+                                        <Typography>
+                                            {p.name}: {p.total} Bs
+                                        </Typography>
+                                        <Button
+                                            size="small"
+                                            color="error"
+                                            onClick={() =>
+                                                handleRemovePlayer(p.id)
+                                            }
+                                        >
+                                            ✕
+                                        </Button>
+                                    </Box>
+                                ))
+                            )}
+                        </Paper>
+                    </Box>
+                </Box>
+
+                <Box mb={4}>
+                    <Typography variant="h6" gutterBottom>
+                        Add Round
+                    </Typography>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        flexWrap="wrap"
+                        gap={2}
+                    >
+                        <FormControl sx={{ minWidth: 120 }}>
+                            <InputLabel>Winner</InputLabel>
+                            <Select
+                                value={winner}
+                                onChange={(e: SelectChangeEvent) =>
+                                    setWinner(
+                                        e.target.value as "1" | "2" | "draw"
+                                    )
+                                }
+                                label="Winner"
+                            >
+                                <MenuItem value="1">Team 1</MenuItem>
+                                <MenuItem value="2">Team 2</MenuItem>
+                                <MenuItem value="draw">Draw</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <TextField
+                            label="Amount"
+                            type="number"
+                            value={winner === "draw" ? 0 : amount ?? ""}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                setAmount(value === "" ? undefined : +value);
+                            }}
+                            disabled={winner === "draw"}
+                        />
+
+                        <FormControl sx={{ minWidth: 120 }}>
+                            <InputLabel>Tripletas</InputLabel>
+                            <Select
+                                value={tripletas}
+                                onChange={(e) =>
+                                    setTripletas(Number(e.target.value))
+                                }
+                                label="Tripletas"
+                                disabled={winner === "draw"}
+                            >
+                                {[0, 1, 2, 3, 4, 5].map((val) => (
+                                    <MenuItem key={val} value={val}>
+                                        {val}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        <Button
+                            variant="contained"
+                            onClick={handleAddRound}
+                            disabled={!canAddRound}
+                        >
+                            Add
+                        </Button>
+                    </Box>
+                </Box>
+
+                <Box>
+                    <Typography variant="h6" gutterBottom>
+                        Rounds
+                    </Typography>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>#</TableCell>
+                                    <TableCell>Winner</TableCell>
+                                    <TableCell>Tripleta</TableCell>
+                                    <TableCell>Payout</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {rounds.map((r, i) => {
+                                    const payout = r.tripleta
+                                        ? r.payout * 2
+                                        : r.payout;
+                                    return (
+                                        <TableRow key={r.id}>
+                                            <TableCell>{i + 1}</TableCell>
+                                            <TableCell>
+                                                {r.team1Win
+                                                    ? "Team 1"
+                                                    : r.team2Win
+                                                    ? "Team 2"
+                                                    : "Draw"}
+                                            </TableCell>
+                                            <TableCell>{r.tripleta}</TableCell>
+                                            <TableCell>{r.payout} Bs</TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+
+                <Box display="flex" justifyContent="flex-end" mt={2}>
                     <Button
                         variant="outlined"
-                        onClick={handleAddPlayer}
-                        disabled={!newPlayerName.trim()}
+                        color="error"
+                        onClick={handleDeleteLastRound}
+                        disabled={rounds.length === 0}
                     >
-                        Add Player
+                        Delete Last Round
                     </Button>
                 </Box>
-            </Box>
 
-            <Box display="flex" justifyContent="space-between" mb={4}>
-                <Box width="48%">
-                    <Typography variant="h6">Team 1</Typography>
-                    <Paper variant="outlined" sx={{ p: 2 }}>
-                        {team1.length === 0 ? (
-                            <Typography variant="body2" color="text.secondary">
-                                No players
-                            </Typography>
-                        ) : (
-                            team1.map((p) => (
-                                <Box
-                                    key={p.id}
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="space-between"
-                                >
-                                    <Typography>
-                                        {p.name}: {p.total} Bs
-                                    </Typography>
-                                    <Button
-                                        size="small"
-                                        color="error"
-                                        onClick={() => handleRemovePlayer(p.id)}
-                                    >
-                                        ✕
-                                    </Button>
-                                </Box>
-                            ))
-                        )}
-                    </Paper>
+                <Box mt={6}>
+                    <Typography variant="h6" gutterBottom>
+                        Leaderboard
+                    </Typography>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Player</TableCell>
+                                    <TableCell>Wins</TableCell>
+                                    <TableCell>Tripletas</TableCell>
+                                    <TableCell>Balance (Bs)</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {leaderboard.map((stat) => (
+                                    <TableRow key={stat.id}>
+                                        <TableCell>{stat.name}</TableCell>
+                                        <TableCell>
+                                            {stat.lifetimeWins}
+                                        </TableCell>
+                                        <TableCell>
+                                            {stat.lifetimeTripletas}
+                                        </TableCell>
+                                        <TableCell>
+                                            {stat.lifetimeBalance}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </Box>
-
-                <Box width="48%">
-                    <Typography variant="h6">Team 2</Typography>
-                    <Paper variant="outlined" sx={{ p: 2 }}>
-                        {team2.length === 0 ? (
-                            <Typography variant="body2" color="text.secondary">
-                                No players
-                            </Typography>
-                        ) : (
-                            team2.map((p) => (
-                                <Box
-                                    key={p.id}
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="space-between"
-                                >
-                                    <Typography>
-                                        {p.name}: {p.total} Bs
-                                    </Typography>
-                                    <Button
-                                        size="small"
-                                        color="error"
-                                        onClick={() => handleRemovePlayer(p.id)}
-                                    >
-                                        ✕
-                                    </Button>
-                                </Box>
-                            ))
-                        )}
-                    </Paper>
-                </Box>
-            </Box>
-
-            <Box mb={4}>
-                <Typography variant="h6" gutterBottom>
-                    Add Round
-                </Typography>
-                <Box display="flex" alignItems="center" flexWrap="wrap" gap={2}>
-                    <FormControl sx={{ minWidth: 120 }}>
-                        <InputLabel>Winner</InputLabel>
-                        <Select
-                            value={winner}
-                            onChange={(e: SelectChangeEvent) =>
-                                setWinner(e.target.value as "1" | "2" | "draw")
-                            }
-                            label="Winner"
-                        >
-                            <MenuItem value="1">Team 1</MenuItem>
-                            <MenuItem value="2">Team 2</MenuItem>
-                            <MenuItem value="draw">Draw</MenuItem>
-                        </Select>
-                    </FormControl>
-
-                    <TextField
-                        label="Amount"
-                        type="number"
-                        value={winner === "draw" ? 0 : amount ?? ""}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setAmount(value === "" ? undefined : +value);
-                        }}
-                        disabled={winner === "draw"}
-                    />
-
-                    <FormControl sx={{ minWidth: 120 }}>
-                        <InputLabel>Tripletas</InputLabel>
-                        <Select
-                            value={tripletas}
-                            onChange={(e) =>
-                                setTripletas(Number(e.target.value))
-                            }
-                            label="Tripletas"
-                            disabled={winner === "draw"}
-                        >
-                            {[0, 1, 2, 3, 4, 5].map((val) => (
-                                <MenuItem key={val} value={val}>
-                                    {val}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-
+                <Box display="flex" justifyContent="center" mt={4} mb={2}>
                     <Button
                         variant="contained"
-                        onClick={handleAddRound}
-                        disabled={!canAddRound}
+                        color="success"
+                        onClick={async () => {
+                            const sessionId = crypto.randomUUID();
+                            await saveSessionToFirestore(players, rounds); // optionally pass sessionId too
+                            await updateLeaderboard(players, rounds, sessionId);
+
+                            setPlayers([]);
+                            setRounds([]);
+                            setWinner(undefined);
+                            setAmount(undefined);
+                            setTripletas(0);
+                            saveToLocalStorage("players", []);
+                            saveToLocalStorage("rounds", []);
+
+                            alert("Session saved and cleared!");
+                        }}
                     >
-                        Add
+                        Finish Session
                     </Button>
                 </Box>
             </Box>
-
-            <Box>
-                <Typography variant="h6" gutterBottom>
-                    Rounds
-                </Typography>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>#</TableCell>
-                                <TableCell>Winner</TableCell>
-                                <TableCell>Tripleta</TableCell>
-                                <TableCell>Payout</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rounds.map((r, i) => {
-                                const payout = r.tripleta
-                                    ? r.payout * 2
-                                    : r.payout;
-                                return (
-                                    <TableRow key={r.id}>
-                                        <TableCell>{i + 1}</TableCell>
-                                        <TableCell>
-                                            {r.team1Win
-                                                ? "Team 1"
-                                                : r.team2Win
-                                                ? "Team 2"
-                                                : "Draw"}
-                                        </TableCell>
-                                        <TableCell>{r.tripleta}</TableCell>
-                                        <TableCell>{r.payout} Bs</TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
-
-            <Box display="flex" justifyContent="flex-end" mt={2}>
-                <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={handleDeleteLastRound}
-                    disabled={rounds.length === 0}
-                >
-                    Delete Last Round
-                </Button>
-            </Box>
-
-            <Box mt={6}>
-                <Typography variant="h6" gutterBottom>
-                    Leaderboard
-                </Typography>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Player</TableCell>
-                                <TableCell>Wins</TableCell>
-                                <TableCell>Tripletas</TableCell>
-                                <TableCell>Balance (Bs)</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {leaderboard.map((stat) => (
-                                <TableRow key={stat.id}>
-                                    <TableCell>{stat.name}</TableCell>
-                                    <TableCell>{stat.lifetimeWins}</TableCell>
-                                    <TableCell>
-                                        {stat.lifetimeTripletas}
-                                    </TableCell>
-                                    <TableCell>
-                                        {stat.lifetimeBalance}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
-            <Box display="flex" justifyContent="center" mt={4} mb={2}>
-                <Button
-                    variant="contained"
-                    color="success"
-                    onClick={async () => {
-                        const sessionId = crypto.randomUUID();
-                        await saveSessionToFirestore(players, rounds); // optionally pass sessionId too
-                        await updateLeaderboard(players, rounds, sessionId);
-
-                        setPlayers([]);
-                        setRounds([]);
-                        setWinner(undefined);
-                        setAmount(undefined);
-                        setTripletas(0);
-                        saveToLocalStorage("players", []);
-                        saveToLocalStorage("rounds", []);
-
-                        alert("Session saved and cleared!");
-                    }}
-                >
-                    Finish Session
-                </Button>
-            </Box>
-        </Container>
+        </Box>
     );
 }
 
