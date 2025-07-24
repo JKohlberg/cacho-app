@@ -169,15 +169,13 @@ function App() {
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "center",
                 alignItems: "center",
                 minHeight: "100vh",
                 backgroundImage: `url(${background})`,
                 backgroundSize: "cover",
                 backgroundRepeat: "repeat",
                 backgroundPosition: "center",
-                px: 2,
-                py: 4,
+
             }}
         >
             <Box
@@ -185,17 +183,16 @@ function App() {
                 src={logo}
                 alt="Noches de Cacho Logo"
                 sx={{
-                    maxWidth: 300,
+                    maxWidth: 800,
                     alignSelf: "center",
                     mb: 2,
-                    mt: 35,
                 }}
             />
 
             <Box
                 sx={{
                     width: "100%",
-                    maxWidth: 375, // You can set to 375 for iPhone size
+                    maxWidth: '90%', // You can set to 375 for iPhone size
                     backgroundColor: "rgba(255, 255, 255, 0.5)",
                     borderRadius: 8,
                     boxShadow: 3,
